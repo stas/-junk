@@ -1,0 +1,17 @@
+CONST name 'Stas'
+VAR date '29.08.1987'
+VAR count 3
+ARRAY hooby ['music','movies','404']
+
+READ new_name
+
+IF new_name == 'Stas'
+    PRINT 'OK'
+else
+    PRINT 'WRONG'
+ENDIF
+
+WHILE count <= 0
+    PRINT hobby[count]
+    count = count - 1 
+ENDWHILE

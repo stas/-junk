@@ -1,0 +1,181 @@
+Lexical Analyzer for Prototype Programming Language
+===================================================
+
+Lexic Specifications
+--------------------
+
+Alphabet
+- Upper (A-Z) and lower case letters (a-z) of the English alphabet
+- Underline character '_'
+- Decimal digits (0-9)
+- Special symbols:
+    ~ operators '+', '-', '*', '/', '=', '<', '>'
+    ~ separators ','
+- An expression ends with a newline always
+- reserved words 'VAR', 'CONST', 'ARRAY', 'IF', 'WHILE', 'READ', 'PRINT'
+
+Predefined data types
+- Boolean
+    * 'TRUE', 'FALSE'
+- Constants
+    * starts with 'CONST' keyword
+    * value is assigned by countering with (") character
+    * value can contain 
+        ~ upper and lower case letters of English alphabet (A-Za-z)
+        ~ digits (0-9)
+        ~ special characters of any kind
+        ~ special symbol for escaping characters is slash (\)
+    * attribution can be done imediately as a variable is defined and only then
+- Variables
+    * starts with 'VAR' keyword
+    * value can contain 
+        ~ upper and lower case letters of English alphabet (A-Za-z)
+        ~ digits (0-9)
+        ~ special characters of any kind
+        ~ special symbol for escaping characters is slash (\)
+    * attribution can be done imediately as a variable is defined and lives in memory
+- Arrays
+    * starts with 'ARRAY' keyword
+    * value declaration must start with a '['
+    * value can contain 
+        ~ upper and lower case letters of English alphabet (A-Za-z)
+        ~ digits (0-9)
+        ~ special characters of any kind
+        ~ special symbol for escaping characters is slash (\)
+    * multiple values are delimited using commas ','
+    * value declaration must end with a ']'
+    * attribution can be done imediately as a variable is defined and lives in memory
+
+3. User defined data types (macroses)
+		* starts with 'DEFINE' keyword
+		* value is assigned by countering with (") character
+		* value can contain 
+			~ upper and lower case letters of English alphabet (A-Za-z)
+			~ digits (0-9)
+			~ special characters of any kind
+			~ special symbol for escaping characters is slash (\)
+		* value can take an expression or a VAR|CONST
+
+Statements
+- Assignment
+    * Uses keyword '='
+    * Performs value attribution from right to left
+    * Should start with data type declaration VAR, CONST or DEFINE
+- Conditional
+    * Starts with keyword 'IF'
+    * Ends with keyword 'ENDIF'
+    * Tests the condition followed after keyword until finds newline '\n'
+    * Executes the expression if given condition returns 'TRUE' until meets 'ENDIF' of 'ELSE'
+    * Executes the expression after 'ELSE' if exists and condition returns 'FALSE' until meets 'ENDIF'
+- Loop
+    * Starts with keyword 'WHILE'
+    * Ends with keyword 'ENDWHILE'
+    * Tests the condition after keyword until finds newline '\n'
+    * Executes the expression if given condition returns 'TRUE' until meets 'ENDWHILE'
+- Input
+    * Starts with keyword 'READ'
+    * Must follow with a variable name that will be used to store read values
+    * Must end with a newline '\n'
+- Output
+    * Starts with keyword 'PRINT'
+    * Must follow with a variable name that will be used to read from values
+    * Must end with a newline '\n' 
+
+Syntax
+------
+
+The words - predefined tokens are specified between " and ":	
+
+a) Sintactical rules:
+    program ::= "VAR" decllist "\n" cmpdstmt "."
+   decllist ::= declaration | declaration "\n" decllist
+declaration ::= IDENTIFIER ":" type
+  arraydecl ::= "ARRAY" "[" nr "]"
+      type  ::= type1|arraydecl
+   stmtlist ::= stmt | stmt "\n" stmtlist
+       stmt ::= simplstmt | structstmt
+  simplstmt ::= assignstmt | iostmt
+ assignstmt ::= IDENTIFIER "=" expression
+ expression ::= expression "+" term | term
+       term ::= term "*" factor | factor
+     factor ::= "(" expression ")" | IDENTIFIER
+     iostmt ::= "READ" | "PRINT" IDENTIFIER 
+ structstmt ::= cmpdstmt | ifstmt | whilestmt
+     ifstmt ::= "IF" condition "\n" stmt ["ELSE" stmt] "ENDIF""
+  whilestmt ::= "WHILE" condition "\n" stmt "ENDWHILE"
+  condition ::= expression RELATION expression
+b) lexical rules:
+ IDENTIFIER ::= letter | letter{letter}{digit}
+     letter ::= "A" | "B" | . ..| "Z"
+      digit ::= "0" | "1" |...| "9"
+   RELATION ::= "<" | "<=" | "=" | "<>" | ">=" | ">"
+
+The tokens are codified according to the following table:
+- identifiers	- code 0
+- constants	- code  1
+- reserved words: each word has its own code
+- operators: each operator has its own code
+- separators: each separator has its own code
+Codification:
+-------------------------
+| Token type	|   code |
+-------------------------
+| identifier	|    0  |
+-------------------------
+|  string       |    1  |
+-------------------------
+|  digits     	|    2  |
+-------------------------
+|  array    	|    3  |
+-------------------------
+|read		|    4  |
+-------------------------
+|print 		|    5  |
+-------------------------
+| if		|    6  |
+-------------------------
+| endif		|    7  |
+-------------------------
+|  else  	|    8  |
+-------------------------
+| while		|    9  |
+-------------------------
+| endwhile	|    10 |
+-------------------------
+| +		|    11 |
+-------------------------
+| * 	    	|    12 |
+-------------------------
+| [	        |    13 |
+-------------------------
+| ]     	|    14 |
+-------------------------
+| -		|    15 |
+-------------------------
+| <     	|    16 |
+-------------------------
+| >	      	|    17 |
+-------------------------
+| =	       	|    18 |
+-------------------------
+
+Example source code
+===================
+
+CONST name 'Stas'
+VAR date '29.08.1987'
+VAR count '3'
+ARRAY hooby ['music','movies','404']
+
+READ new_name
+
+IF new_name == 'Stas'
+    PRINT 'OK'
+else
+    PRINT 'WRONG'
+ENDIF
+
+WHILE count <= 0
+    PRINT hobby[count]
+    count = count - 1
+ENDWHILE
