@@ -17,14 +17,22 @@ def checker(text):
     On failure it will output the position in the <text> where pattern fails matching
     """
     pattern = re.compile(r"""
-        (?P<reserved_key>[A-Z_][A-Z0-9_]*)
+        (?P<read_operator>(READ)|(read))
+        |(?P<print_operator>(PRINT)|(print))
+        |(?P<const_def>(CONST)|(const))
+        |(?P<var_def>(VAR)|(var))
+        |(?P<if_operator>(IF)|(if))
+        |(?P<else_operator>(ELSE)|(else))
+        |(?P<endif_operator>(ENDIF)|(endif))
+        |(?P<while_operator>(WHILE)|(while))
+        |(?P<endwhile_operator>(ENDWHILE)|(endwhile))
+        |(?P<reserved_key>[A-Z_][A-Z0-9_]*)
         |(?P<identifier>[a-zA-Z][a-zA-Z0-9_]+)
         |(?P<digits>[0-9]+)
         |(?P<string>\'[a-zA-Z0-9_(.)]+\')
         |(?P<array>\[(\'(\d+)|(\w+)|(.)+\')\])
         |(?P<newline>\n)
         |(?P<whitespace>\s+)
-        |(?P<special_char>([=][=])|([<][=])|([>][=])|[<]|[>]|[+]|[-]|[*]|[/]|[=])
         |(?P<match>[=][=])
         |(?P<less_then>[<][=])
         |(?P<more_then>[>][=])
@@ -63,11 +71,31 @@ def gen_table(data):
         string = 1,
         digits = 2,
         array = 3,
+        read_operator = 4,
+        print_operator = 5,
+        if_operator = 6,
+        endif_operator = 7,
+        else_operator = 8,
+        while_operator = 9,
+        endwhile_operator = 10,
+        plus = 11,
+        times = 12,
+        minus = 13,
+        less = 14,
+        more = 15,
+        newline = 16,
+        whitespace = 17,
+        match = 18,
+        less_then = 19,
+        more_then = 15,
+        division = 21,
+        equals = 22,
+        const_def = 23,
+        var_def = 24,
         )
     
-    if type is not 'whitespace' or 'special_char' or 'newline':
-        if ts.has_key(type):
-            return ts.get(type), value
+    if ts.has_key(type) and type not in ['whitespace', 'newline']:
+        return ts.get(type), value
 
 
 # Start checking...
@@ -102,25 +130,29 @@ def main():
                 st.append(r[1])
                 tc.append(atom)
         curr_line += 1
-    st = list(set(st))
-    
+
+    #pprint(tc)
+    #pprint(st)
+
     print
-    print 'Printing TC'
+    print 'Printing PIF'
     print '###########'
     for item in st:
         # position in tc and position in st
         for code in tc:
             if code[1] is item:
                 print code[0], st.index(item)
+                if code[0] > 3:
+                    st[st.index(item)] = None
     
     print
     print 'Printing ST'
     print '###########'
+    seen = set()
     for simbol in st:
-        print st.index(simbol), simbol
+        if simbol and simbol not in seen:
+            seen.add(simbol)
+            print st.index(simbol), simbol
     
-    # For debugging, print the not joined TC
-    #pprint(tc)
-
 if __name__ == "__main__":
     main()

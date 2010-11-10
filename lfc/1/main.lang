@@ -2,13 +2,13 @@ CONST name 'Stas'
 VAR date '29.08.1987'
 VAR count 3
 VAR count_duplicate 3
-ARRAY hooby ['music','movies','404']
+VAR hooby ['music','movies','404']
 
 READ new_name
 
 IF new_name == 'Stas'
     PRINT 'OK'
-else
+ELSE
     PRINT 'WRONG'
 ENDIF
 
