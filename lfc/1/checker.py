@@ -141,7 +141,7 @@ def main():
         # position in tc and position in st
         for code in tc:
             if code[1] is item:
-                print code[0], st.index(item)
+                print st.index(item), code[0]
                 if code[0] > 3:
                     st[st.index(item)] = None
     

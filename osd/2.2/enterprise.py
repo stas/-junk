@@ -22,10 +22,10 @@ def enterprise_to_spock():
             f.close()
             print "Enterprise, spock is at:", s_pid, ", sending signal..."
             os.kill(int(s_pid), signal.SIGUSR1)
-            time.sleep(30)
+            time.sleep(10)
         else:
             print "Enterprise can't find spock..."
-            time.sleep(30)
+            time.sleep(10)
     
     sys.exit(0)
 

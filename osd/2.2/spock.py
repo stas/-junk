@@ -22,11 +22,14 @@ def spock_to_enterprise():
             e_pid = f.readline()
             f.close()
             print "Spock, enterprise is at:", e_pid, ", sending signal..."
-            os.kill(int(e_pid), signal.SIGUSR1)
-            time.sleep(30)
+            try:
+                os.kill(int(e_pid), signal.SIGUSR1)
+            except OSError:
+                pass
+            time.sleep(10)
         else:
             print "Spock, enterprise is down"
-            time.sleep(30)
+            time.sleep(10)
     
     sys.exit(0)
 
