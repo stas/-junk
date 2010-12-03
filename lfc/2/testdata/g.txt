@@ -1,0 +1,13 @@
+S A B
+0 1
+S
+S 0A
+S e
+S 0
+S 1
+S 1B
+A 0A
+A 1B
+A 0
+B 1B
+B 1
