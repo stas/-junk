@@ -55,7 +55,7 @@ class Logic:
         line = self.filelines[2].strip()
         self.initialstate = line.split(' ')
         
-        if len(self.initialstate) < 2:
+        if len(self.initialstate) > 2:
             print 'Error at line 3: The initial states expected'
             self.initialstate = None
         else:
@@ -91,44 +91,55 @@ class Logic:
         return
 
     def showtransitions(self):
-        lines = self.filelines[3:]
-        l_nr = 3
+        lines = self.filelines[4:]
+        l_nr = 4
+
         for l in lines:
             l_nr+=1
             l = l.strip()
-            
+            if l:
+                l = l.split(' ')
+        
             if len(l) is not 3:
                 print 'Error at line', l_nr, ': A transition function expected'
             elif self.transitions is None:
-                self.transitions = list(l)
+                self.transitions = list()
+                self.transitions.append(l)
             else:
                 self.transitions.append(l)
         
         if len(self.transitions) < 1:
-            self.finalstates = None
+            self.transitions = None
             print 'Error: Some transition functions expected' 
         else:
             print 'Transitions:'
-            print self.transitions
-            
+            for t in self.transitions:
+                print "delta(%s, %s) = %s" % (t[0], t[1], t[2])
+        
         return
 
     def buildgrammar(self):
         g = Grammar()
         g.nonterminals = self.states
         g.terminals = self.symbols
-        g.startsymbol = join(self.initialstate)
+        g.startsymbol = str(self.initialstate)
         
         tf = self.transitions
         if len(tf) > 0:
             for t in tf:
                 if len(t) == 3:
-                    g.add_production(t[0], t[1], t[2])
-                    if self.finalstates.contains(t[2]):
-                        g.add_production(t[0], t[1], '')
+                    g.add_production(t[0], t[1] + t[2])
+                    if t[2] in self.finalstates:
+                        g.add_production(t[0], t[1] + '')
         
-        if self.finalstates.contains(g.starsymbol)
-            g.add_production(g.starsymbol, "e")
+        if g.starsymbol in self.finalstates:
+            g.add_production(g.starsymbol, 'e')
         
         self.grammar = g
-        print self.grammar
+
+        print 'Nonterminals: ', self.grammar.nonterminals
+        print 'Terminals: ', self.grammar.terminals
+        print 'Start symbol: ', self.grammar.startsymbol
+        print 'Productions: ', self.grammar.productions
+
+        return

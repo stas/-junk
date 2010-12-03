@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-from automata.logic import Logic
+from grammar.logic import Logic
 
 def main():
     option = None
@@ -13,12 +13,13 @@ def main():
         print '''
     ID|Option description
     -----------------------
-    1 |Read finite automata from file
-    2 |Display the set of states
-    3 |Display the set of input symbols (alphabet)
-    4 |Display the set of final states
-    5 |Display all transitions
-    6 |Construct the equivalent regular grammar
+    1 |Read grammar from file
+    2 |Display the set of nonterminal symbols
+    3 |Display the set of terminal symbols
+    4 |Display all the productions
+    5 |Display the productions for a given nonterminal
+    6 |Verify if grammar is correct
+    7 |Construct automata
       |Any other key to exit
         '''
         sys.exit(0) 
@@ -26,7 +27,7 @@ def main():
     print 'Processing option', option, '...'
     l = Logic()
     try:
-        while option < 7:
+        while option < 8:
             switch = {
                 1: l.fromfile,
                 2: l.showstates,
