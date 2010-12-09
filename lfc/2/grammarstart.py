@@ -30,11 +30,12 @@ def main():
         while option < 8:
             switch = {
                 1: l.fromfile,
-                2: l.showstates,
-                3: l.showsymbols,
-                4: l.showfinalstates,
-                5: l.showtransitions,
-                6: l.buildgrammar
+                2: l.show_nonterminals,
+                3: l.show_terminals,
+                4: l.show_productions,
+                5: l.show_productsnonterm,
+                6: l.verify_grammar,
+                7: l.build_automata,
             }[option]()
             print 'Choose another option:'
             option = int(sys.stdin.readline())
