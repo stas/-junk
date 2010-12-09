@@ -144,6 +144,6 @@ main (int argc, char *argv[])
     assert(0 == rc);
 
     clock_gettime(CLOCK_MONOTONIC, &finish);
-    printf("Used time: %ld", (finish.tv_sec - start.tv_sec) + (finish.tv_nsec - start.tv_nsec) / 1000000000.0 );
+    printf("Used time: %f\n", (finish.tv_sec - start.tv_sec) + (finish.tv_nsec - start.tv_nsec) / 1000000000.0 );
     exit(EXIT_SUCCESS);
 }
