@@ -2,6 +2,7 @@
 
 import sys
 from grammar.logic import Logic
+from automata.logic import AutomataLogic
 
 def main():
     option = None
@@ -26,6 +27,7 @@ def main():
 
     print 'Processing option', option, '...'
     l = Logic()
+    l.automata = AutomataLogic()
     try:
         while option < 8:
             switch = {

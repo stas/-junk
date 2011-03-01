@@ -14,6 +14,7 @@ class Logic:
     startsymbol = None
     productions = None
     grammar = None
+    automata = None
 
     def fromfile(self):
         if self.filepath is None:
@@ -40,7 +41,7 @@ class Logic:
 
     def show_nonterminals(self):
         line = self.filelines[0].strip()
-        self.states = line.split(' ')
+        self.nonterminals = line.split(' ')
 
         if len(self.nonterminals) < 1:
             print 'Error at line 1: The set of nonterminals expected'
@@ -48,12 +49,11 @@ class Logic:
         else:
             print 'Non terminal symbols:'
             print self.nonterminals
-
         return
 
     def show_terminals(self):
         line = self.filelines[1].strip()
-        self.states = line.split(' ')
+        self.terminals = line.split(' ')
 
         if len(self.terminals) < 1:
             print 'Error at line 1: The set of terminals expected'
@@ -66,6 +66,7 @@ class Logic:
         # Starting symbol
         line = self.filelines[2].strip()
         self.startsymbol = line.split(' ')
+        self.startsymbol = str(self.startsymbol[0])
         
         if len(self.startsymbol) < 1:
             print 'Error at line 3: The start symbol expected'
@@ -77,23 +78,33 @@ class Logic:
         return
 
     def show_productions(self):
-        line = self.filelines[3].strip()
         self.productions = {}
-        production = line.split(' ')
-
-        if len(self.productions) is not 2:
-            print 'Error at line 1: The set of productions expected'
-            self.terminals = None
-        else:
-            self.productions[production[0]] = production[1]
-            print 'Productions:'
-            print self.productions
+        lines = self.filelines[3:]
+        for line in lines:
+            if line:
+                line = line.strip()
+                production = line.split(' ')
+                production[1] = [str(c) for c in production[1]]
+        
+                if len(production) is not 2:
+                    print 'Error at line 1: The set of productions expected'
+                    self.terminals = None
+                else:
+                    if self.productions.has_key(production[0]):
+                        self.productions[production[0]].append(production[1])
+                    else:
+                        self.productions[production[0]] = list()
+                        self.productions[production[0]].append(production[1])
+        
+        print 'Productions:'
+        print self.productions
         return
 
     def show_productsnonterm(self):
-        for n in self.nonterminals:
-            print get_products(n)
-
+        print 'Type the non-terminal:',
+        fpath = sys.stdin.readline()
+        n = fpath.rstrip()
+        print self.get_products(n)
         return
 
     def is_grammar(self):
@@ -124,29 +135,56 @@ class Logic:
 
         return True
 
-    def verify_grammar(self):
-        exists = False
-        prods = self.get_products(self.startsymbol)
-        if prods and 'e' in prods:
-            exists = True
-
-        for n in self.nonterminals:
+    def check_grammar(self):
+        prods = self.productions.get(self.startsymbol)
+        if prods:
             for p in prods:
-                if len(p) is 1:
-                    if p in self.terminals:
+                if 'e' in p:
+                    exists = True
+                    break
+        
+        for n in self.nonterminals:
+            prods = self.get_products(n)
+            for p in prods:
+                if 'e' not in p: # Skip checks for 'e'
+                    in_terminals = False
+                    for p0 in p: # Check for terminals
+                        for t in p0:
+                            if t in self.terminals:
+                                in_terminals = True
+                                break
+                    
+                    if not in_terminals:
                         return False
-                    else:
-                        if n is not self.startsymbol:
-                            return False
-                if len(p) is 2:
-                    if p[0] in self.terminals or p[1] in self.nonterminals:
+                else:
+                    if n is not self.startsymbol:
                         return False
-                    if exists:
-                        if p[1] is self.startsymbol:
-                            return False
         return True
-
+    
+    def verify_grammar(self):
+        print self.check_grammar()
+        return
+    
     def build_automata(self):
+        if not self.automata:
+            return
+        
+        self.automata.states = self.nonterminals
+        self.automata.states.append('K')
+        self.automata.symbols = self.terminals
+        self.automata.initialstate = self.startsymbol
+        self.automata.finalstates.append('K')
+        
+        if 'e' in self.get_products(self.startsymbol):
+            self.automata.finalstates.append(self.startsymbol)
+        
+        for nt in self.nonterminals:
+            prods = self.get_products(nt)
+            if prods:
+                for p in prods:
+                    if 'e' not in p:
+                        
+        
         return
 
     def get_products(self, nonterminal):
